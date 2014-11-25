@@ -74,11 +74,13 @@ void ls (char* archivo)
 				// Se crea un nuevo espacio para el buffer con el tamanio que ya tenia
 				// mas el de la nueva entrada y se #rellena:
 				free(buffer);
-				buffer = malloc(strlen(aux1) + strlen(aux2) +2);
+				buffer = malloc(strlen(aux1) + strlen(aux2) +1);
 				strcpy(buffer, aux1);
 				strcat(buffer, aux2);
+				memset(aux2, 0, 200);
 				free(aux1);
-				aux1 = malloc(strlen(buffer));
+				aux1 = malloc(strlen(buffer)+1);
+				memset(aux1, 0, strlen(buffer)+1);
 			}
 		}
 		free(aux1);
@@ -214,10 +216,11 @@ void cat(char *archivo)
 	free(buffer);
 }
 
-/*void rm(char *archivo)
+void rm(char *archivo)
 {
 	DIR *dir;
 	struct dirent dirEntry;
+
 
 }
 
@@ -226,4 +229,4 @@ int main(int argc, char const *argv[])
 	char *archivo = ".";
 	ls(archivo);
 	return 0;
-}*/
+}
