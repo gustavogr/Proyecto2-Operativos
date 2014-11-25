@@ -103,13 +103,14 @@ struct hijos * generarHijos()
 	return h;
 }
 
-void procesarRaiz(struct hijos * h,int resultado)
+void procesarRaiz(struct hijos * h,int lectura)
 {
 	char * comando = malloc(7*sizeof(char));
 	char * path1 = malloc(256*sizeof(char));
 	char * path2 = malloc(256*sizeof(char));
 	char * buffer = malloc(520*sizeof(char));
 	char * instruccion = malloc(520*sizeof(char));
+	char * resultado = malloc(720*sizeof(char));
 	while(1)
 	{
 		printf("fssh> ");
@@ -135,11 +136,32 @@ void procesarRaiz(struct hijos * h,int resultado)
 			char * obj = malloc(30*sizeof(char));
 			char * sig = malloc(30*sizeof(char));
 			obj = strtok(path1,"/");
-			sig = strtok(NULL,"/");
 			int i;
+			int escrito = 0;
 			for (i = 0; i <  h-> n; ++i)
 			{
-				/* code */
+				if (strcmp(h->nombres[i],obj))
+				{
+					strcpy(instruccion,"ls ");
+					while( (sig=strtok(NULL,"/")) != NULL)
+					{
+						strcat(instruccion,"/");
+						strcat(instruccion,sig);
+						write(h->pipes[i],instruccion,520);
+					}
+					escrito = 1;
+				}
+			}
+			if (escrito)
+			{
+				read(lectura,resultado,720);
+				printf("%s",resultado);
+			} 
+			else 
+			{
+				sig = strtok(NULL,"/");
+				if (sig != NULL) printf("Path invalido\n");
+				else ls(obj);
 			}
 
 
