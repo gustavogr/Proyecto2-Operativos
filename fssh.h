@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <signal.h>
+#include "comandos.h"
 
 struct hijos
 {
