@@ -169,14 +169,14 @@ void cat(char *archivo)
 	// Verificamos el error.
 	if ((dir = opendir(".")) == NULL)
 	{
-		buffer = malloc(sizeof(char)*200);
+		buffer = malloc(sizeof(char)*45);
 		sprintf(buffer, "Error aplicando opendir sobre el directorio.");
 		write(1, buffer, strlen(buffer));
 		free(buffer);
 		return;
 	}
 	// Buscamos el archivo.
-	while (((dirEntry = readdir(dir)) != NULL) && (!(boolean)))
+	while (((dirEntry = readdir(dir)) != NULL) && !(boolean))
 	{
 		// Si hay error:
 		if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
@@ -185,18 +185,21 @@ void cat(char *archivo)
 			sprintf(buffer, "Error aplicando stat sobre %s.\n", archivo);
 			write(1, buffer, strlen(buffer));
 			free(buffer);
+			closedir(dir);
 			return;
 		}
 		// Si es la entrada deseada:
 		if (strcmp(dirEntry->d_name, archivo) == 0) 
 		{
 			// Se verifica que tipo de archivo es:
+			
 			if (!((statbuf.st_mode & S_IFMT) == S_IFREG))
 			{
 				buffer = malloc(sizeof(char)*40 + strlen(archivo));
 				sprintf(buffer, "Error cat: %s no es un archivo regular.\n", archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			buffer = malloc(sizeof(char)*statbuf.st_size +1);
@@ -248,6 +251,7 @@ void rm(char *archivo)
 			sprintf(buffer, "Error aplicando stat sobre %s.\n", archivo);
 			write(1, buffer, strlen(buffer));
 			free(buffer);
+			closedir(dir);
 			return;
 		}
 		// Si es la entrada deseada:
@@ -260,6 +264,7 @@ void rm(char *archivo)
 				sprintf(buffer, "Error rm: %s no es un archivo regular.\n", archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			if (unlink(archivo) == -1)
@@ -268,6 +273,7 @@ void rm(char *archivo)
 				sprintf(buffer, "Error rm: %s no pudo ser eliminado.\n",archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			boolean = 1;
@@ -287,7 +293,10 @@ void rm(char *archivo)
 
 int main(int argc, char const *argv[])
 {
-	/*char *archivo1 = "destruyemepues";
+	/*
+	PRUEBAS VARIAS. DESCOMENTA LAS DE TU INTERES PANA.
+
+	char *archivo1 = "destruyemepues";
 	rm(archivo1);
 	char *archivo2 = "noexiste";
 	rm(archivo2);
@@ -300,9 +309,10 @@ int main(int argc, char const *argv[])
 	cat(archivo3);*/
 
 	ls(".");
+	ls(".");
 	/*ls(archivo1);
 	ls(archivo2);
-	ls(archivo3);*/
-	printf("fino.\n");
+	ls(archivo3);
+	printf("fino.\n");*/
 	return 0;
 }
