@@ -89,7 +89,10 @@ void ls (char* archivo)
 				memset(aux1, 0, strlen(buffer)+1);
 			}
 		}
-		if (cant == 0) buffer = "";
+		if (cant == 0) {
+			write(1,"",2);
+			return;
+		}
 		free(aux1);
 		free(aux2);
 		closedir(dir);
@@ -293,32 +296,32 @@ void rm(char *archivo)
 		return;
 	}
 }
-
+/*
 int main(int argc, char const *argv[])
 {
-	/*
+	
 	PRUEBAS VARIAS. DESCOMENTA LAS DE TU INTERES PANA.
 
-	*/
+	
 	char *archivo1 = "destruyemepues";
 	//rm(archivo1);
 	char *archivo2 = "noexiste";
 	//rm(archivo2);
-	/*char *archivo3 = "borrar";
+	char *archivo3 = "borrar";
 	rm(archivo3);
 
 	cat(archivo1);
 
-	cat(archivo2);*/
+	cat(archivo2);
 	char *archivo3 = "a.txt";
 	//cat(archivo3);
 
 
-	/*ls(".");
+	ls(".");
 	ls(".");
 	ls(archivo1);
 	ls(archivo2);
 	ls(archivo3);
-	printf("fino.\n");*/
+	printf("fino.\n");
 	return 0;
-}
+}*/
