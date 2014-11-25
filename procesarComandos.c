@@ -66,9 +66,40 @@ void procesarHijo(struct hijos * h)
 			}
 		} 
 		else if (strcmp(comando,"cat") == 0)
-		{
-			/* code */
-		} 
+		{	
+			char * obj = NULL;
+			char * sig = NULL;
+			obj = strtok(path1,"/");
+			sig = strtok(NULL,"/");
+			if (sig == NULL)
+			{
+				cat(obj);
+				continue;
+			}
+
+			int i;
+			int escrito = 0;
+			for (i = 0; i <  h-> n; ++i)
+			{
+				if (strcmp(h->nombres[i],obj) == 0)
+				{
+					memset(instruccion,0,520);
+					strcpy(instruccion,"cat /");
+					strcat(instruccion,sig);
+					while( (sig=strtok(NULL,"/")) != NULL)
+					{
+						strcat(instruccion,"/");
+						strcat(instruccion,sig);
+					}
+					write(h->pipes[i],instruccion,520);
+					escrito = 1;
+				}
+			}
+			if (!escrito)
+			{
+				printf("Path invalido.\n");				
+			}
+		}  
 		else if (strcmp(comando,"cp") == 0)
 		{
 			/* code */
@@ -185,7 +216,52 @@ void procesarRaiz(struct hijos * h,int lectura)
 		} 
 		else if (strcmp(comando,"cat") == 0)
 		{
-			/* code */
+			if (path1 == NULL || path2 != NULL)
+			{
+				printf("Uso: cat <path1>\n");
+				continue;
+			}
+			
+			char * obj = NULL;
+			char * sig = NULL;
+			obj = strtok(path1,"/");
+			sig = strtok(NULL,"/");
+			if (sig == NULL)
+			{
+				cat(obj);
+				continue;
+			}
+
+
+			int i;
+			int escrito = 0;
+			for (i = 0; i <  h-> n; ++i)
+			{
+				if (strcmp(h->nombres[i],obj) == 0)
+				{
+					memset(instruccion,0,520);
+					strcpy(instruccion,"cat /");
+					strcat(instruccion,sig);
+					while( (sig=strtok(NULL,"/")) != NULL)
+					{
+						strcat(instruccion,"/");
+						strcat(instruccion,sig);
+					}
+					write(h->pipes[i],instruccion,520);
+					escrito = 1;
+				}
+			}
+			if (escrito)
+			{
+				memset(resultado,0,720);
+				read(lectura,resultado,720);
+				printf("%s",resultado);
+
+			} 
+			else 
+			{
+				printf("Path invalido.\n");				
+			}
 		} 
 		else if (strcmp(comando,"cp") == 0)
 		{

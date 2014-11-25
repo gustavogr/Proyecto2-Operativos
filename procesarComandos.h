@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <sys/wait.h>
 #include "comandos.h"
 
 struct hijos

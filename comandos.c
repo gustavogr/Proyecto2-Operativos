@@ -182,6 +182,7 @@ void cat(char *archivo)
 				return;
 			}
 			buffer = malloc(sizeof(char)*statbuf.st_size +1);
+			memset(buffer,0,statbuf.st_size +1);
 			FILE *fp = fopen(archivo, "r");
 			int countbytes = fread(buffer, 1, statbuf.st_size +1, fp);
 			fclose(fp);
@@ -203,10 +204,10 @@ void cat(char *archivo)
 }
 
 void rm();
-
+/*
 int main(int argc, char const *argv[])
 {
 	char *archivo = "ejemplo";
 	cat(archivo);
 	return 0;
-}
+}*/
