@@ -8,6 +8,7 @@ void ls (char* archivo)
 	char type = '-';
 	char *buffer = malloc(sizeof(char)*200);	// Recordar liberar.
 	// Verificacion de error.
+	memset(buffer,0,200);
 	if ((dir = opendir(".")) == NULL)	// Retorna.
 	{
 		sprintf(buffer, "Error aplicando opendir sobre el directorio.");

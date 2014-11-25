@@ -5,6 +5,8 @@ void sigPipeHandler()
 	printf("Se murio un pipe..\n");
 }
 
+void procesarHijo(struct hijos *);
+
 void liberarHijos(struct hijos * h){
 	int i;
 	for (i = 0; i < h->n; ++i)
@@ -84,7 +86,7 @@ struct hijos * generarHijos()
 					
 
 
-
+					procesarHijo(haux);
 
 
 					if (haux != NULL) liberarHijos(haux);
@@ -103,6 +105,92 @@ struct hijos * generarHijos()
 	return h;
 }
 
+void procesarHijo(struct hijos * h)
+{
+	char * comando = malloc(7*sizeof(char));
+	char * path1 = malloc(256*sizeof(char));
+	char * path2 = malloc(256*sizeof(char));
+	char * buffer = malloc(520*sizeof(char));
+	char * instruccion = malloc(520*sizeof(char));
+	while(1)
+	{
+		read(0,instruccion,520);
+		strcpy(buffer,instruccion);
+		comando = strtok(buffer," ");
+		path1 = strtok(NULL," ");
+		path2 = strtok(NULL," ");
+		if (strcmp(comando,"ls") == 0)
+		{
+			if (strcmp(path1,"/") == 0)
+			{
+				ls(".");
+				continue;
+			}
+			char * obj = malloc(30*sizeof(char));
+			char * sig = malloc(30*sizeof(char));
+			obj = strtok(path1,"/");
+			int i;
+			int escrito = 0;
+			if (h != NULL)
+			{
+				for (i = 0; i <  h-> n; ++i)
+				{
+					if (strcmp(h->nombres[i],obj) == 0)
+					{
+						strcpy(instruccion,"ls /");
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,sig);
+							strcat(instruccion,"/");
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
+					}
+				}
+			}
+			if (!escrito)
+			{
+				if (obj == NULL) write(1,"Path invalido\n",20);
+				else {
+					ls(obj);
+				}
+			}
+		} 
+		else if (strcmp(comando,"cat") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"cp") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"mv") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"find") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"rm") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"mkdir") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"rmdir") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"quit") == 0)
+		{
+			/* code */
+		}
+	}
+}
+
 void procesarRaiz(struct hijos * h,int lectura)
 {
 	char * comando = malloc(7*sizeof(char));
@@ -111,6 +199,7 @@ void procesarRaiz(struct hijos * h,int lectura)
 	char * buffer = malloc(520*sizeof(char));
 	char * instruccion = malloc(520*sizeof(char));
 	char * resultado = malloc(720*sizeof(char));
+	strcpy(resultado,"\0");
 	while(1)
 	{
 		printf("fssh> ");
@@ -140,15 +229,15 @@ void procesarRaiz(struct hijos * h,int lectura)
 			int escrito = 0;
 			for (i = 0; i <  h-> n; ++i)
 			{
-				if (strcmp(h->nombres[i],obj))
+				if (strcmp(h->nombres[i],obj) == 0)
 				{
-					strcpy(instruccion,"ls ");
+					strcpy(instruccion,"ls /");
 					while( (sig=strtok(NULL,"/")) != NULL)
 					{
-						strcat(instruccion,"/");
 						strcat(instruccion,sig);
-						write(h->pipes[i],instruccion,520);
+						strcat(instruccion,"/");
 					}
+					write(h->pipes[i],instruccion,520);
 					escrito = 1;
 				}
 			}
@@ -161,7 +250,9 @@ void procesarRaiz(struct hijos * h,int lectura)
 			{
 				sig = strtok(NULL,"/");
 				if (sig != NULL) printf("Path invalido\n");
-				else ls(obj);
+				else {
+					ls(obj);
+				}
 			}
 
 
@@ -201,7 +292,6 @@ void procesarRaiz(struct hijos * h,int lectura)
 		} else {
 			printf("Comando invalido.\n");
 		}
-
 	}
 }
 
