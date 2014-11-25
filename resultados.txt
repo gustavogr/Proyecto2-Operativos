@@ -1,0 +1,25 @@
+Error rm: destruyemepues no es un archivo regular.
+Error noexiste: noexiste no existe en el directorio.
+Error cat: destruyemepues no es un archivo regular.
+Error noexiste: noexiste no existe en el directorio.
+jejeje
+jajaja
+jijiji
+jojojo
+jujuju
+-rw-r--r-- 1 genny genny	112	11 25 12:25	fssh.h
+-rw-r--r-- 1 genny genny	2891	11 25 12:25	fssh.c
+-rwxr-xr-x 1 genny genny	14664	11 25 16:33	comandos
+-rw-r--r-- 1 genny genny	9208	11 25 16:33	comandos.c
+-rw-r--r-- 1 genny genny	270	11 25 14:26	comandos.h
+-rw-r--r-- 1 genny genny	251	11 25 13:35	procesarComandos.h
+drwxr-xr-x 2 genny genny	4096	11 25 14:38	destruyemepues
+-rw-r--r-- 1 genny genny	135	11 25 14:44	Makefile
+-rw-r--r-- 1 genny genny	35	11 25 15:27	a.txt
+-rw-r--r-- 1 genny genny	7052	11 25 15:8	procesarComandos.c
+drwxr-xr-x 8 genny genny	4096	11 25 16:8	.git
+-rw-r--r-- 1 genny genny	244	11 25 16:33	resultados.txt
+drwxr-xr-x 2 genny genny	4096	11 25 14:38	destruyemepues
+Error noexiste: noexiste no existe en el directorio.
+-rw-r--r-- 1 genny genny	35	11 25 15:27	a.txt
+fino.

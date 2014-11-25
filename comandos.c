@@ -8,7 +8,6 @@ void ls (char* archivo)
 	char type = '-';
 	char *buffer;
 	// Verificacion de error.
-	//memset(buffer,0,200);
 	if ((dir = opendir(".")) == NULL)	// Retorna.
 	{
 		buffer = malloc(sizeof(char)*45);
@@ -24,6 +23,9 @@ void ls (char* archivo)
 		buffer = malloc(sizeof(char)*200);
 		char *aux1	= malloc(sizeof(char)*200);		// Recordar liberar.
 		char *aux2	= malloc(sizeof(char)*200);		// Recordar liberar.
+		memset(buffer, 0, 200);
+		memset(aux1, 0, 200);
+		memset(aux1, 0, 200);
 		// Iterar por el directorio para ir imprimiendo y así pues.
 		while ((dirEntry = readdir(dir)) != NULL)
 		{
@@ -33,6 +35,7 @@ void ls (char* archivo)
 				if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
 				{
 					buffer = malloc(sizeof(char)*29 + strlen(dirEntry->d_name));
+					memset(aux1, 0, sizeof(char)*29 + strlen(dirEntry->d_name));
 					sprintf(buffer, "Error aplicando stat sobre %s.\n", 
 														dirEntry->d_name);
 					write(1, buffer, strlen(buffer));
@@ -75,11 +78,12 @@ void ls (char* archivo)
 				// mas el de la nueva entrada y se #rellena:
 				free(buffer);
 				buffer = malloc(strlen(aux1) + strlen(aux2) +1);
+				memset(buffer, 0, strlen(aux1) + strlen(aux2) +1);
 				strcpy(buffer, aux1);
 				strcat(buffer, aux2);
-				memset(aux2, 0, 200);
 				free(aux1);
 				aux1 = malloc(strlen(buffer)+1);
+				memset(aux2, 0, 200);
 				memset(aux1, 0, strlen(buffer)+1);
 			}
 		}
@@ -142,7 +146,7 @@ void ls (char* archivo)
 		}
 		closedir(dir);
 		// Si no lo consiguio, hay error:
-		if (strlen(buffer) == 0)
+		if (!(boolean))
 		{
 			buffer = malloc(sizeof(char)*38 + 2*strlen(archivo));
 			sprintf(buffer, "Error %s: %s no existe en el directorio.\n", archivo, archivo);
@@ -165,14 +169,14 @@ void cat(char *archivo)
 	// Verificamos el error.
 	if ((dir = opendir(".")) == NULL)
 	{
-		buffer = malloc(sizeof(char)*200);
+		buffer = malloc(sizeof(char)*45);
 		sprintf(buffer, "Error aplicando opendir sobre el directorio.");
 		write(1, buffer, strlen(buffer));
 		free(buffer);
 		return;
 	}
 	// Buscamos el archivo.
-	while (((dirEntry = readdir(dir)) != NULL) && (!(boolean)))
+	while (((dirEntry = readdir(dir)) != NULL) && !(boolean))
 	{
 		// Si hay error:
 		if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
@@ -181,18 +185,21 @@ void cat(char *archivo)
 			sprintf(buffer, "Error aplicando stat sobre %s.\n", archivo);
 			write(1, buffer, strlen(buffer));
 			free(buffer);
+			closedir(dir);
 			return;
 		}
 		// Si es la entrada deseada:
 		if (strcmp(dirEntry->d_name, archivo) == 0) 
 		{
 			// Se verifica que tipo de archivo es:
+			
 			if (!((statbuf.st_mode & S_IFMT) == S_IFREG))
 			{
 				buffer = malloc(sizeof(char)*40 + strlen(archivo));
 				sprintf(buffer, "Error cat: %s no es un archivo regular.\n", archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			buffer = malloc(sizeof(char)*statbuf.st_size +1);
@@ -244,6 +251,7 @@ void rm(char *archivo)
 			sprintf(buffer, "Error aplicando stat sobre %s.\n", archivo);
 			write(1, buffer, strlen(buffer));
 			free(buffer);
+			closedir(dir);
 			return;
 		}
 		// Si es la entrada deseada:
@@ -256,6 +264,7 @@ void rm(char *archivo)
 				sprintf(buffer, "Error rm: %s no es un archivo regular.\n", archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			if (unlink(archivo) == -1)
@@ -264,6 +273,7 @@ void rm(char *archivo)
 				sprintf(buffer, "Error rm: %s no pudo ser eliminado.\n",archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
+				closedir(dir);
 				return;
 			}
 			boolean = 1;
@@ -280,17 +290,29 @@ void rm(char *archivo)
 		return;
 	}
 }
-/*
+
 int main(int argc, char const *argv[])
 {
-	char *archivo = "destruyemepues";
-	/*cat(archivo);
-	archivo = "a.txt";
-	cat(archivo);
-	archivo = "hola";
-	cat(archivo);
-	archivo = "noexiste";
-	cat(archivo);
-	rm(archivo);
+	/*
+	PRUEBAS VARIAS. DESCOMENTA LAS DE TU INTERES PANA.
+
+	char *archivo1 = "destruyemepues";
+	rm(archivo1);
+	char *archivo2 = "noexiste";
+	rm(archivo2);
+	char *archivo3 = "borrar";
+	rm(archivo3);
+
+	cat(archivo1);
+	cat(archivo2);
+	archivo3 = "a.txt";
+	cat(archivo3);*/
+
+	ls(".");
+	ls(".");
+	/*ls(archivo1);
+	ls(archivo2);
+	ls(archivo3);
+	printf("fino.\n");*/
 	return 0;
-}*/
+}
