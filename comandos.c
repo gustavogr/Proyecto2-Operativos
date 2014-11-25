@@ -253,7 +253,7 @@ void rm(char *archivo)
 			if (!((statbuf.st_mode & S_IFMT) == S_IFREG))
 			{
 				buffer = malloc(sizeof(char)*40 + strlen(archivo));
-				sprintf(buffer, "Error cat: %s no es un archivo regular.\n", archivo);
+				sprintf(buffer, "Error rm: %s no es un archivo regular.\n", archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
 				return;
@@ -261,7 +261,7 @@ void rm(char *archivo)
 			if (unlink(archivo) == -1)
 			{
 				buffer = malloc(sizeof(char)*35 + strlen(archivo));
-				sprintf(buffer, "Error rm: %s no pudo ser eliminado.\n");
+				sprintf(buffer, "Error rm: %s no pudo ser eliminado.\n",archivo);
 				write(1, buffer, strlen(buffer));
 				free(buffer);
 				return;
@@ -280,7 +280,7 @@ void rm(char *archivo)
 		return;
 	}
 }
-
+/*
 int main(int argc, char const *argv[])
 {
 	char *archivo = "destruyemepues";
@@ -290,7 +290,7 @@ int main(int argc, char const *argv[])
 	archivo = "hola";
 	cat(archivo);
 	archivo = "noexiste";
-	cat(archivo);*/
+	cat(archivo);
 	rm(archivo);
 	return 0;
-}
+}*/
