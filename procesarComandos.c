@@ -150,7 +150,77 @@ void procesarHijo(struct hijos * h)
 		} 
 		else if (strcmp(comando,"mkdir") == 0)
 		{
-			/* code */
+			char * obj = NULL;
+			char * sig = NULL;
+			obj = strtok(path1,"/");
+			sig = strtok(NULL,"/");
+			if (sig == NULL)
+			{
+				if (mkdir(obj,0777) == -1)
+				{
+					if (errno == 17)
+					{
+						printf("Ya existe un archivo con nombre %s.\n", obj);
+					}
+					else
+					{
+						printf("Error en mkdir: %s\n",strerror(errno));
+					}
+				} 
+				else
+				{
+					int fd[2];
+					pipe(fd);
+					if (fork() == 0)
+					{
+						close(fd[1]);
+						dup2(fd[0],0);
+						close(fd[0]);
+						// Eliminamos el h del padre
+						chdir(obj);
+						procesarHijo(NULL);
+						// Cuando salga de la funcion esta terminando.
+						free(instruccion);
+						free(buffer);
+						return;
+					}
+					else
+					{
+						close(fd[0]);
+						h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
+						h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
+						h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
+						strcpy(h->nombres[h->n],obj);
+						h->pipes[h->n] = fd[1]; 
+						h->n ++;
+					}
+					write(1,"",2);
+				}
+				continue;
+			}
+
+			int i;
+			int escrito = 0;
+			for (i = 0; i <  h-> n; ++i)
+			{
+				if (strcmp(h->nombres[i],obj) == 0)
+				{
+					memset(instruccion,0,520);
+					strcpy(instruccion,"mkdir /");
+					strcat(instruccion,sig);
+					while( (sig=strtok(NULL,"/")) != NULL)
+					{
+						strcat(instruccion,"/");
+						strcat(instruccion,sig);
+					}
+					write(h->pipes[i],instruccion,520);
+					escrito = 1;
+				}
+			}
+			if (!escrito)
+			{
+				printf("Path invalido.\n");				
+			}
 		} 
 		else if (strcmp(comando,"rmdir") == 0)
 		{
@@ -358,7 +428,87 @@ void procesarRaiz(struct hijos * h,int lectura)
 		} 
 		else if (strcmp(comando,"mkdir") == 0)
 		{
-			/* code */
+			if (path1 == NULL || path2 != NULL)
+			{
+				printf("Uso: mkdir <path>\n");
+				continue;
+			}
+			char * obj = NULL;
+			char * sig = NULL;
+			obj = strtok(path1,"/");
+			sig = strtok(NULL,"/");
+			if (sig == NULL)
+			{
+				if (mkdir(obj,0777) == -1)
+				{
+					if (errno == 17)
+					{
+						printf("Ya existe un archivo con nombre %s.\n", obj);
+					}
+					else
+					{
+						printf("Error en mkdir: %s\n",strerror(errno));
+					}
+				} 
+				else 
+				{
+					int fd[2];
+					pipe(fd);
+					if (fork() == 0)
+					{
+						close(fd[1]);
+						dup2(fd[0],0);
+						close(fd[0]);
+						// Eliminamos el h del padre
+						chdir(obj);
+						procesarHijo(NULL);
+						// Cuando salga de la funcion esta terminando.
+						free(instruccion);
+						free(buffer);
+						return;
+					}
+					else
+					{
+						close(fd[0]);
+						h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
+						h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
+						h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
+						strcpy(h->nombres[h->n],obj);
+						h->pipes[h->n] = fd[1]; 
+						h->n ++;
+					}
+				}
+				continue;
+			}
+			int i;
+			int escrito = 0;
+			for (i = 0; i <  h-> n; ++i)
+			{
+				if (strcmp(h->nombres[i],obj) == 0)
+				{
+					memset(instruccion,0,520);
+					strcpy(instruccion,"mkdir /");
+					strcat(instruccion,sig);
+					while( (sig=strtok(NULL,"/")) != NULL)
+					{
+						strcat(instruccion,"/");
+						strcat(instruccion,sig);
+					}
+					write(h->pipes[i],instruccion,520);
+					escrito = 1;
+				}
+			}
+			if (escrito)
+			{
+				memset(resultado,0,720);
+				read(lectura,resultado,720);
+				printf("%s",resultado);
+
+			} 
+			else 
+			{
+				printf("Path invalido.\n");				
+			}
 		} 
 		else if (strcmp(comando,"rmdir") == 0)
 		{
