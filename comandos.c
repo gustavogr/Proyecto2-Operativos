@@ -294,7 +294,7 @@ void rm(char *archivo)
 	}
 }
 
-/*int main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
 	/*
 	PRUEBAS VARIAS. DESCOMENTA LAS DE TU INTERES PANA.
@@ -315,10 +315,10 @@ void rm(char *archivo)
 
 
 	/*ls(".");
-	ls(".");*/
+	ls(".");
 	ls(archivo1);
 	ls(archivo2);
 	ls(archivo3);
-	printf("fino.\n");
+	printf("fino.\n");*/
 	return 0;
-}*/
+}
