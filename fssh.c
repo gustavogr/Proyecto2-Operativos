@@ -103,7 +103,7 @@ struct hijos * generarHijos()
 	return h;
 }
 
-void procesarRaiz(struct hijos * h)
+void procesarRaiz(struct hijos * h,int resultado)
 {
 	char * comando = malloc(7*sizeof(char));
 	char * path1 = malloc(256*sizeof(char));
@@ -122,7 +122,28 @@ void procesarRaiz(struct hijos * h)
 		path2 = strtok(NULL," ");
 		if (strcmp(comando,"ls") == 0)
 		{
-			/* code */
+			if (path1 == NULL || path2 != NULL)
+			{
+				printf("Uso: ls <path1>\n");
+				continue;
+			}
+			if (strcmp(path1,"/") == 0)
+			{
+				ls(".");
+				continue;
+			}
+			char * obj = malloc(30*sizeof(char));
+			char * sig = malloc(30*sizeof(char));
+			obj = strtok(path1,"/");
+			sig = strtok(NULL,"/");
+			int i;
+			for (i = 0; i <  h-> n; ++i)
+			{
+				/* code */
+			}
+
+
+
 		} 
 		else if (strcmp(comando,"cat") == 0)
 		{
@@ -202,7 +223,7 @@ int main(int argc, char const *argv[])
 	struct hijos *h = generarHijos();
 	dup2(salidaEstandar,1);
 	close(salidaEstandar);
-	procesarRaiz(h);
+	procesarRaiz(h,lectura);
 
 
 	liberarHijos(h);
