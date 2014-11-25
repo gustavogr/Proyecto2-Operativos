@@ -8,7 +8,6 @@ void ls (char* archivo)
 	char type = '-';
 	char *buffer;
 	// Verificacion de error.
-	//memset(buffer,0,200);
 	if ((dir = opendir(".")) == NULL)	// Retorna.
 	{
 		buffer = malloc(sizeof(char)*45);
@@ -142,7 +141,7 @@ void ls (char* archivo)
 		}
 		closedir(dir);
 		// Si no lo consiguio, hay error:
-		if (strlen(buffer) == 0)
+		if (!(boolean))
 		{
 			buffer = malloc(sizeof(char)*38 + 2*strlen(archivo));
 			sprintf(buffer, "Error %s: %s no existe en el directorio.\n", archivo, archivo);
@@ -280,17 +279,25 @@ void rm(char *archivo)
 		return;
 	}
 }
-/*
+
 int main(int argc, char const *argv[])
 {
-	char *archivo = "destruyemepues";
-	/*cat(archivo);
-	archivo = "a.txt";
-	cat(archivo);
-	archivo = "hola";
-	cat(archivo);
-	archivo = "noexiste";
-	cat(archivo);
-	rm(archivo);
+	/*char *archivo1 = "destruyemepues";
+	rm(archivo1);
+	char *archivo2 = "noexiste";
+	rm(archivo2);
+	char *archivo3 = "borrar";
+	rm(archivo3);
+
+	cat(archivo1);
+	cat(archivo2);
+	archivo3 = "a.txt";
+	cat(archivo3);*/
+
+	ls(".");
+	/*ls(archivo1);
+	ls(archivo2);
+	ls(archivo3);*/
+	printf("fino.\n");
 	return 0;
-}*/
+}
