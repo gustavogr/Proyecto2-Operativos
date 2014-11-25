@@ -35,7 +35,6 @@ void ls (char* archivo)
 					return;
 				}
 				aux1 = buffer;
-				printf("Holaaa\n");
 				// Si si se pudo, se verifica que tipo de archivo es:
 				if ((statbuf.st_mode & S_IFMT) == S_IFREG) type = '-';
 				else if ((statbuf.st_mode & S_IFMT) == S_IFDIR) type = 'd';
@@ -44,7 +43,6 @@ void ls (char* archivo)
 				else if ((statbuf.st_mode & S_IFMT) == S_IFLNK) type = 'l';
 				else if ((statbuf.st_mode & S_IFMT) == S_IFSOCK) type = 's';
 				else if ((statbuf.st_mode & S_IFMT) == S_IFIFO) type = 'p';
-				printf("%c\n", type);
 				// Se crea la entrada:
 				struct tm *tm;
 				char fechaM[100];
@@ -140,7 +138,6 @@ void ls (char* archivo)
 	}
 	// Y borralo que fue con lapizzzzzz.
 	write(1, buffer, strlen(buffer));
-	printf("Borralo que fue con lapizzzzzzz\n");
 	free(buffer);
 }
 
