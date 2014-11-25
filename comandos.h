@@ -13,3 +13,5 @@
 void ls();
 
 void cat();
+
+void rm();
