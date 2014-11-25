@@ -169,6 +169,7 @@ void procesarHijo(struct hijos * h)
 				} 
 				else
 				{
+					write(1,"",2);
 					int fd[2];
 					pipe(fd);
 					if (fork() == 0)
@@ -176,7 +177,6 @@ void procesarHijo(struct hijos * h)
 						close(fd[1]);
 						dup2(fd[0],0);
 						close(fd[0]);
-						// Eliminamos el h del padre
 						chdir(obj);
 						procesarHijo(NULL);
 						// Cuando salga de la funcion esta terminando.
@@ -187,16 +187,27 @@ void procesarHijo(struct hijos * h)
 					else
 					{
 						close(fd[0]);
-						h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
-						h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
-						h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
-						strcpy(h->nombres[h->n],obj);
-						h->pipes[h->n] = fd[1]; 
-						h->n ++;
+						if (h != NULL)
+						{
+							h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
+							h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
+							h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
+							strcpy(h->nombres[h->n],obj);
+							h->pipes[h->n] = fd[1]; 
+							h->n ++;
+						}
+						else {
+							h = malloc(sizeof(struct hijos));
+							h->nombres = malloc(1 * sizeof(char*));
+							h->pipes = malloc(1 * sizeof(int));
+							h->n=1;
+							h->nombres[0] = malloc(strlen(obj)*sizeof(char));
+							strcpy(h->nombres[0],obj);
+							h->pipes[0] = fd[1];
+						}
+						continue;
 					}
-					write(1,"",2);
 				}
-				continue;
 			}
 
 			int i;
@@ -394,8 +405,6 @@ void procesarRaiz(struct hijos * h,int lectura)
 				rm(obj);
 				continue;
 			}
-
-
 			int i;
 			int escrito = 0;
 			for (i = 0; i <  h-> n; ++i)
@@ -458,6 +467,7 @@ void procesarRaiz(struct hijos * h,int lectura)
 					{
 						close(fd[1]);
 						dup2(fd[0],0);
+						dup2(5,1);
 						close(fd[0]);
 						// Eliminamos el h del padre
 						chdir(obj);
@@ -470,12 +480,24 @@ void procesarRaiz(struct hijos * h,int lectura)
 					else
 					{
 						close(fd[0]);
-						h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
-						h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
-						h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
-						strcpy(h->nombres[h->n],obj);
-						h->pipes[h->n] = fd[1]; 
-						h->n ++;
+						if (h != NULL)
+						{
+							h->nombres = realloc(h->nombres,(h->n+1)*sizeof(char*));
+							h->pipes = realloc(h->pipes,(h->n+1)*sizeof(int));
+							h->nombres[h->n] = malloc(strlen(obj)*sizeof(char));
+							strcpy(h->nombres[h->n],obj);
+							h->pipes[h->n] = fd[1]; 
+							h->n ++;
+						}
+						else {
+							h = malloc(sizeof(struct hijos));
+							h->nombres = malloc(1 * sizeof(char*));
+							h->pipes = malloc(1 * sizeof(int));
+							h->n=1;
+							h->nombres[0] = malloc(strlen(obj)*sizeof(char));
+							strcpy(h->nombres[0],obj);
+							h->pipes[0] = fd[1];
+						}
 					}
 				}
 				continue;

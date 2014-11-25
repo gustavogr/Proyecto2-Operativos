@@ -117,7 +117,9 @@ int main(int argc, char const *argv[])
 	// Creamos el pipe de subida y lo ponemos en salida estandar para los procesos hijos
 	pipe(fd);
 	dup2(fd[1],1);
-	close(fd[1]);
+	//printf("PIPE:\n");
+	//printf("%d\n",fd[1]);
+	//close(fd[1]);
 	lectura = fd[0];
 	struct hijos *h = generarHijos();
 	dup2(salidaEstandar,1);

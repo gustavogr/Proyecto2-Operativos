@@ -291,7 +291,7 @@ void rm(char *archivo)
 	}
 }
 
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
 	/*
 	PRUEBAS VARIAS. DESCOMENTA LAS DE TU INTERES PANA.
@@ -306,13 +306,13 @@ int main(int argc, char const *argv[])
 	cat(archivo1);
 	cat(archivo2);
 	archivo3 = "a.txt";
-	cat(archivo3);*/
+	cat(archivo3);
 
 	ls(".");
 	ls(".");
 	/*ls(archivo1);
 	ls(archivo2);
 	ls(archivo3);
-	printf("fino.\n");*/
+	printf("fino.\n");
 	return 0;
-}
+}*/
