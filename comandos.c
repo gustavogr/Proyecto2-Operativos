@@ -160,18 +160,19 @@ void cat(char *archivo)
 	DIR *dir;
 	struct dirent *dirEntry;
 	struct stat statbuf;
-	char *buffer = "\0";
+	char *buffer;
+	int boolean = 0;
 	// Verificamos el error.
 	if ((dir = opendir(".")) == NULL)
 	{
 		buffer = malloc(sizeof(char)*200);
 		sprintf(buffer, "Error aplicando opendir sobre el directorio.");
-		write(1, buffer, 5);
+		write(1, buffer, strlen(buffer));
 		free(buffer);
 		return;
 	}
 	// Buscamos el archivo.
-	while (((dirEntry = readdir(dir)) != NULL) && (strlen(buffer) == 0))
+	while (((dirEntry = readdir(dir)) != NULL) && (!(boolean)))
 	{
 		// Si hay error:
 		if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
@@ -195,15 +196,16 @@ void cat(char *archivo)
 				return;
 			}
 			buffer = malloc(sizeof(char)*statbuf.st_size +1);
-			memset(buffer,0,statbuf.st_size +1);
+			memset(buffer, 0, statbuf.st_size +1);
 			FILE *fp = fopen(archivo, "r");
 			fread(buffer, 1, statbuf.st_size +1, fp);
 			fclose(fp);
+			boolean = 1;
 		}
 	}
 	closedir(dir);
 	// Si no lo consiguio:
-	if (strlen(buffer) == 0)
+	if (!(boolean))
 	{
 		buffer = malloc(sizeof(char)*38 + 2*strlen(archivo));
 		sprintf(buffer, "Error %s: %s no existe en el directorio.\n", archivo, archivo);
@@ -219,14 +221,76 @@ void cat(char *archivo)
 void rm(char *archivo)
 {
 	DIR *dir;
-	struct dirent dirEntry;
-
-
+	struct dirent *dirEntry;
+	struct stat statbuf;
+	char *buffer;
+	int boolean = 0;
+	// Verificamos el error.
+	if ((dir = opendir(".")) == NULL)
+	{
+		buffer = malloc(sizeof(char)*200);
+		sprintf(buffer, "Error aplicando opendir sobre el directorio.");
+		write(1, buffer, strlen(buffer));
+		free(buffer);
+		return;
+	}
+	// Buscamos el archivo.
+	while (((dirEntry = readdir(dir)) != NULL) && (!(boolean)))
+	{
+		// Si hay error:
+		if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
+		{
+			buffer = malloc(sizeof(char)*30 + strlen(archivo));
+			sprintf(buffer, "Error aplicando stat sobre %s.\n", archivo);
+			write(1, buffer, strlen(buffer));
+			free(buffer);
+			return;
+		}
+		// Si es la entrada deseada:
+		if (strcmp(dirEntry->d_name, archivo) == 0) 
+		{
+			// Se verifica que tipo de archivo es:
+			if (!((statbuf.st_mode & S_IFMT) == S_IFREG))
+			{
+				buffer = malloc(sizeof(char)*40 + strlen(archivo));
+				sprintf(buffer, "Error cat: %s no es un archivo regular.\n", archivo);
+				write(1, buffer, strlen(buffer));
+				free(buffer);
+				return;
+			}
+			if (unlink(archivo) == -1)
+			{
+				buffer = malloc(sizeof(char)*35 + strlen(archivo));
+				sprintf(buffer, "Error rm: %s no pudo ser eliminado.\n");
+				write(1, buffer, strlen(buffer));
+				free(buffer);
+				return;
+			}
+			boolean = 1;
+		}
+	}
+	closedir(dir);
+	// Si no lo consiguio:
+	if (!(boolean))
+	{
+		buffer = malloc(sizeof(char)*38 + 2*strlen(archivo));
+		sprintf(buffer, "Error %s: %s no existe en el directorio.\n", archivo, archivo);
+		write(1, buffer, strlen(buffer));
+		free(buffer);
+		return;
+	}
 }
 
 int main(int argc, char const *argv[])
 {
-	char *archivo = ".";
-	ls(archivo);
+	char *archivo = "destruyemepues";
+	/*cat(archivo);
+	archivo = "a.txt";
+	cat(archivo);
+	archivo = "hola";
+	cat(archivo);
+	archivo = "noexiste";
+	cat(archivo);*/
+	rm(archivo);
 	return 0;
 }

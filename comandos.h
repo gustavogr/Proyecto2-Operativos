@@ -9,7 +9,7 @@
 #include <grp.h>
 #include <time.h>
 #include <string.h>
-
+#include <fcntl.h>
 void ls();
 
 void cat();
