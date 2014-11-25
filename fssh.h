@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <signal.h>
 
 struct hijos
 {

@@ -1,11 +1,28 @@
 #include "fssh.h"
 
+void sigPipeHandler()
+{
+	printf("Se murio un pipe..\n");
+}
+
+void liberarHijos(struct hijos * h){
+	int i;
+	for (i = 0; i < h->n; ++i)
+	{
+		free(h->nombres[i]);
+		close(h->pipes[i]);
+	}
+	free(h->nombres);
+	free(h->pipes);
+	free(h);
+}
+
 struct hijos * generarHijos()
 {
 	int numsubdir,fd[2];
 	struct dirent *entradaDir;
 	DIR *dirp;
-	struct hijos * h = malloc(sizeof(struct hijos));
+	
 	struct stat statbuf;
 	numsubdir = 0;
 
@@ -14,7 +31,7 @@ struct hijos * generarHijos()
 	{
 		if (strcmp(entradaDir->d_name,".") != 0 && strcmp(entradaDir->d_name,"..") != 0)
 		{
-			if (stat(entradaDir->d_name,&statbuf) == 1)
+			if (stat(entradaDir->d_name,&statbuf) == -1)
 			{
 				fprintf(stderr, "No se pudo aplicar stat sobre %s: %s \n", 
 											entradaDir->d_name, strerror(errno));
@@ -32,6 +49,7 @@ struct hijos * generarHijos()
 		return (struct hijos *) NULL;
 	}
 	dirp = opendir(".");
+	struct hijos * h = malloc(sizeof(struct hijos));
 	h->nombres = malloc(numsubdir * sizeof(char*));
 	h->pipes = malloc(numsubdir * sizeof(int));
 	h->n=numsubdir;
@@ -49,42 +67,106 @@ struct hijos * generarHijos()
 					close(fd[1]);
 					dup2(fd[0],0);
 					close(fd[0]);
-					chdir(entradaDir->d_name);
-					struct hijos *haux = generarHijos();
+					// Eliminamos el h del padre
 					int i;
-					char* instruccion = malloc(100);
-					read(0,instruccion,1);
-					if (strcmp(instruccion,"S") == 0)
+					for (i = 0; i < numsubdir; ++i)
 					{
-						printf("Señal %s recibida por %s\n",instruccion,entradaDir->d_name);
-						if (haux != NULL)
-						{
-							for (i = 0; i < haux->n; ++i)
-							{
-								write(haux->pipes[i],"S",1);
-							}
-						}
+						free(h->nombres[i]);
+						close(h->pipes[i]);
 					}
-					printf("Soy el hijo %s", entradaDir->d_name);
-					exit(1);
+					free(h->nombres);
+					free(h->pipes);
+					free(h);
+
+					chdir(entradaDir->d_name);
+					closedir(dirp);
+					struct hijos *haux = generarHijos();
 					
-				} else {
+
+
+
+
+
+					if (haux != NULL) liberarHijos(haux);
+					exit(1);	
+				} else {  // Codigo padre
 					close(fd[0]);
-					h->nombres[numsubdir] = malloc(strlen((entradaDir->d_name)+1)*(sizeof(char)));
+					h->nombres[numsubdir] = malloc((strlen(entradaDir->d_name)+1)*(sizeof(char)));
 					strcpy(h->nombres[numsubdir],entradaDir->d_name);
 					h->pipes[numsubdir] = fd[1];
 					numsubdir++;
 				}
-
 			}
 		}
 	}
-
-
-
-
+	closedir(dirp);
 	return h;
 }
+
+void procesarRaiz(struct hijos * h)
+{
+	char * comando = malloc(7*sizeof(char));
+	char * path1 = malloc(256*sizeof(char));
+	char * path2 = malloc(256*sizeof(char));
+	char * buffer = malloc(520*sizeof(char));
+	char * instruccion = malloc(520*sizeof(char));
+	while(1)
+	{
+		printf("fssh> ");
+		fgets(instruccion,519,stdin);
+		if (strlen(instruccion)>0) instruccion[strlen(instruccion)-1] = '\0';
+		strcpy(buffer,instruccion);
+
+		comando = strtok(buffer," ");
+		path1 = strtok(NULL," ");
+		path2 = strtok(NULL," ");
+		if (strcmp(comando,"ls") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"cat") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"cp") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"mv") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"find") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"rm") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"mkdir") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"rmdir") == 0)
+		{
+			/* code */
+		} 
+		else if (strcmp(comando,"quit") == 0)
+		{
+			/* code */
+		} else {
+			printf("Comando invalido.\n");
+		}
+
+	}
+}
+
+
+
+
+
+
 
 
 int main(int argc, char const *argv[])
@@ -108,31 +190,21 @@ int main(int argc, char const *argv[])
 	// El proceso raiz se mueve al directorio especificado
 	chdir(argv[1]);
 	int salidaEstandar, lectura, fd[2];
-
+	signal(SIGPIPE,sigPipeHandler);
 	// Guardo salida estandar
 	salidaEstandar = dup(1);
 
 	// Creamos el pipe de subida y lo ponemos en salida estandar para los procesos hijos
 	pipe(fd);
-	printf("A comenzar.\n");
 	dup2(fd[1],1);
 	close(fd[1]);
 	lectura = fd[0];
 	struct hijos *h = generarHijos();
 	dup2(salidaEstandar,1);
-	int i;
-	for (i = 0; i < h->n; ++i)
-	{
-		printf("Hijo %s, pipe %d.\n",h->nombres[i],h->pipes[i]);
-		write(h->pipes[i],"S",1);
+	close(salidaEstandar);
+	procesarRaiz(h);
 
-	}
-	for (i = 0; i < 10; ++i)
-	{
-		char * buffer = malloc(200);
-		read(lectura,buffer,200);
-		printf("%s\n",buffer);
-	}
 
+	liberarHijos(h);
 	return 0;
 }
