@@ -23,6 +23,9 @@ void ls (char* archivo)
 		buffer = malloc(sizeof(char)*200);
 		char *aux1	= malloc(sizeof(char)*200);		// Recordar liberar.
 		char *aux2	= malloc(sizeof(char)*200);		// Recordar liberar.
+		memset(buffer, 0, 200);
+		memset(aux1, 0, 200);
+		memset(aux1, 0, 200);
 		// Iterar por el directorio para ir imprimiendo y así pues.
 		while ((dirEntry = readdir(dir)) != NULL)
 		{
@@ -32,6 +35,7 @@ void ls (char* archivo)
 				if (stat(dirEntry->d_name, &statbuf) == -1) // Retorna.
 				{
 					buffer = malloc(sizeof(char)*29 + strlen(dirEntry->d_name));
+					memset(aux1, 0, sizeof(char)*29 + strlen(dirEntry->d_name));
 					sprintf(buffer, "Error aplicando stat sobre %s.\n", 
 														dirEntry->d_name);
 					write(1, buffer, strlen(buffer));
@@ -74,11 +78,12 @@ void ls (char* archivo)
 				// mas el de la nueva entrada y se #rellena:
 				free(buffer);
 				buffer = malloc(strlen(aux1) + strlen(aux2) +1);
+				memset(buffer, 0, strlen(aux1) + strlen(aux2) +1);
 				strcpy(buffer, aux1);
 				strcat(buffer, aux2);
-				memset(aux2, 0, 200);
 				free(aux1);
 				aux1 = malloc(strlen(buffer)+1);
+				memset(aux2, 0, 200);
 				memset(aux1, 0, strlen(buffer)+1);
 			}
 		}
