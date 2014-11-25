@@ -141,7 +141,7 @@ void ls (char* archivo)
 	free(buffer);
 }
 
-void cat(char *archivo)
+/*void cat(char *archivo)
 {
 	DIR *dir;
 	struct dirent *dirEntry;
@@ -156,14 +156,10 @@ void cat(char *archivo)
 		return;
 	}
 	// Buscamos el archivo.
-	while((dirEntry = readdir(dir)) != NULL)
-	{
-		if (strcmp(dirEntry->d_name, ".") != 0 && strcmp(dirEntry->d_name,"..") != 0)
-		{
-			
-		}
+
 	}
-}
+}*/
+	
 int main(int argc, char const *argv[])
 {
 	char *archivo = ".";
