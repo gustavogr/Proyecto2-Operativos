@@ -17,7 +17,6 @@ struct hijos * procesarHijo(struct hijos * h)
 {
 	char * comando = NULL;
 	char * path1 = NULL;
-	char * path2 = NULL;
 	char * buffer = malloc(520*sizeof(char));
 	char * instruccion = malloc(520*sizeof(char));
 	while(1)
@@ -26,7 +25,6 @@ struct hijos * procesarHijo(struct hijos * h)
 		strcpy(buffer,instruccion);
 		comando = strtok(buffer," ");
 		path1 = strtok(NULL," ");
-		path2 = strtok(NULL," ");
 		if (strcmp(comando,"ls") == 0)
 		{
 			if (strcmp(path1,"/") == 0)
@@ -103,18 +101,6 @@ struct hijos * procesarHijo(struct hijos * h)
 				printf("Path invalido.\n");				
 			}
 		}  
-		else if (strcmp(comando,"cp") == 0)
-		{
-			/* code */
-		} 
-		else if (strcmp(comando,"mv") == 0)
-		{
-			/* code */
-		} 
-		else if (strcmp(comando,"find") == 0)
-		{
-			/* code */
-		} 
 		else if (strcmp(comando,"rm") == 0)
 		{
 			char * obj = NULL;
@@ -218,7 +204,6 @@ struct hijos * procesarHijo(struct hijos * h)
 					}
 				}
 			}
-
 			int i;
 			int escrito = 0;
 			if (h != NULL)
@@ -244,10 +229,6 @@ struct hijos * procesarHijo(struct hijos * h)
 			{
 				printf("Path invalido.\n");				
 			}
-		} 
-		else if (strcmp(comando,"rmdir") == 0)
-		{
-			/* code */
 		} 
 		else if (strcmp(comando,"quit") == 0)
 		{
@@ -396,15 +377,15 @@ struct hijos * procesarRaiz(struct hijos * h,int lectura)
 		} 
 		else if (strcmp(comando,"cp") == 0)
 		{
-			/* code */
+			printf("No implementado :(\n");
 		} 
 		else if (strcmp(comando,"mv") == 0)
 		{
-			/* code */
+			printf("No implementado :(\n");
 		} 
 		else if (strcmp(comando,"find") == 0)
 		{
-			/* code */
+			printf("No implementado :(\n");
 		} 
 		else if (strcmp(comando,"rm") == 0)
 		{
@@ -560,7 +541,7 @@ struct hijos * procesarRaiz(struct hijos * h,int lectura)
 		} 
 		else if (strcmp(comando,"rmdir") == 0)
 		{
-			/* code */
+			printf("No implementado :(\n");
 		} 
 		else if (strcmp(comando,"quit") == 0)
 		{

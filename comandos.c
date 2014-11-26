@@ -70,10 +70,10 @@ void ls (char* archivo)
 						statbuf.st_mode & 4   ? 'r' : '-',
 						statbuf.st_mode & 2   ? 'w' : '-',
 						statbuf.st_mode & 1   ? 'x' : '-',
-						statbuf.st_nlink,
+						(int)statbuf.st_nlink,
 						getpwuid(statbuf.st_uid)->pw_name,
 						getgrgid(statbuf.st_gid)->gr_name,
-						statbuf.st_size,
+						(int)statbuf.st_size,
 						fechaM,
 						dirEntry->d_name);
 				// Se crea un nuevo espacio para el buffer con el tamanio que ya tenia
@@ -141,10 +141,10 @@ void ls (char* archivo)
 						statbuf.st_mode & 4   ? 'r' : '-',
 						statbuf.st_mode & 2   ? 'w' : '-',
 						statbuf.st_mode & 1   ? 'x' : '-',
-						statbuf.st_nlink,
+						(int)statbuf.st_nlink,
 						getpwuid(statbuf.st_uid)->pw_name,
 						getgrgid(statbuf.st_gid)->gr_name,
-						statbuf.st_size,
+						(int)statbuf.st_size,
 						fechaM,
 						dirEntry->d_name);
 				boolean++;
