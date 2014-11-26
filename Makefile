@@ -3,3 +3,5 @@ all: comandos.o procesarComandos.o fssh.o
 	rm *.o
 .c.o:
 	gcc -g -Wall -c $<
+clean:
+	rm fssh
