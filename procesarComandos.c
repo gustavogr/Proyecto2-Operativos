@@ -13,7 +13,7 @@ void liberarHijos(struct hijos * h){
 }
 
 
-void procesarHijo(struct hijos * h)
+struct hijos * procesarHijo(struct hijos * h)
 {
 	char * comando = NULL;
 	char * path1 = NULL;
@@ -79,22 +79,25 @@ void procesarHijo(struct hijos * h)
 
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
+			if (h != NULL)
 			{
-				if (strcmp(h->nombres[i],obj) == 0)
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"cat /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"cat /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
-			}
+			}	
 			if (!escrito)
 			{
 				printf("Path invalido.\n");				
@@ -127,20 +130,23 @@ void procesarHijo(struct hijos * h)
 
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
+			if (h != NULL)
 			{
-				if (strcmp(h->nombres[i],obj) == 0)
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"rm /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"rm /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (!escrito)
@@ -161,10 +167,12 @@ void procesarHijo(struct hijos * h)
 					if (errno == 17)
 					{
 						printf("Ya existe un archivo con nombre %s.\n", obj);
+						continue;
 					}
 					else
 					{
 						printf("Error en mkdir: %s\n",strerror(errno));
+						continue;
 					}
 				} 
 				else
@@ -178,11 +186,12 @@ void procesarHijo(struct hijos * h)
 						dup2(fd[0],0);
 						close(fd[0]);
 						chdir(obj);
-						procesarHijo(NULL);
+						//liberarHijos(h);
+						h = procesarHijo(NULL);
 						// Cuando salga de la funcion esta terminando.
 						free(instruccion);
 						free(buffer);
-						return;
+						return h;
 					}
 					else
 					{
@@ -212,20 +221,23 @@ void procesarHijo(struct hijos * h)
 
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
-			{
-				if (strcmp(h->nombres[i],obj) == 0)
+			if (h != NULL)
+			{	
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"mkdir /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"mkdir /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (!escrito)
@@ -254,12 +266,12 @@ void procesarHijo(struct hijos * h)
 
 			free(instruccion);
 			free(buffer);
-			return;
+			return h;
 		} 
 	}
 }
 
-void procesarRaiz(struct hijos * h,int lectura)
+struct hijos * procesarRaiz(struct hijos * h,int lectura)
 {
 	char * comando = NULL;
 	char * path1 = NULL;
@@ -295,19 +307,22 @@ void procesarRaiz(struct hijos * h,int lectura)
 			obj = strtok(path1,"/");
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
+			if (h != NULL)
 			{
-				if (strcmp(h->nombres[i],obj) == 0)
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"ls /");
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,sig);
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"ls /");
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,sig);
+							strcat(instruccion,"/");
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (escrito)
@@ -348,20 +363,23 @@ void procesarRaiz(struct hijos * h,int lectura)
 
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
-			{
-				if (strcmp(h->nombres[i],obj) == 0)
+			if (h != NULL)
+			{	
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"cat /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"cat /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (escrito)
@@ -407,20 +425,23 @@ void procesarRaiz(struct hijos * h,int lectura)
 			}
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
+			if (h != NULL)
 			{
-				if (strcmp(h->nombres[i],obj) == 0)
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"rm /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"rm /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (escrito)
@@ -453,10 +474,12 @@ void procesarRaiz(struct hijos * h,int lectura)
 					if (errno == 17)
 					{
 						printf("Ya existe un archivo con nombre %s.\n", obj);
+						continue;
 					}
 					else
 					{
 						printf("Error en mkdir: %s\n",strerror(errno));
+						continue;
 					}
 				} 
 				else 
@@ -469,13 +492,13 @@ void procesarRaiz(struct hijos * h,int lectura)
 						dup2(fd[0],0);
 						dup2(5,1);
 						close(fd[0]);
-						// Eliminamos el h del padre
 						chdir(obj);
-						procesarHijo(NULL);
+						//liberarHijos(h);
+						h = procesarHijo(NULL);
 						// Cuando salga de la funcion esta terminando.
 						free(instruccion);
 						free(buffer);
-						return;
+						return h;
 					}
 					else
 					{
@@ -504,20 +527,23 @@ void procesarRaiz(struct hijos * h,int lectura)
 			}
 			int i;
 			int escrito = 0;
-			for (i = 0; i <  h-> n; ++i)
+			if (h != NULL)
 			{
-				if (strcmp(h->nombres[i],obj) == 0)
+				for (i = 0; i <  h-> n; ++i)
 				{
-					memset(instruccion,0,520);
-					strcpy(instruccion,"mkdir /");
-					strcat(instruccion,sig);
-					while( (sig=strtok(NULL,"/")) != NULL)
+					if (strcmp(h->nombres[i],obj) == 0)
 					{
-						strcat(instruccion,"/");
+						memset(instruccion,0,520);
+						strcpy(instruccion,"mkdir /");
 						strcat(instruccion,sig);
+						while( (sig=strtok(NULL,"/")) != NULL)
+						{
+							strcat(instruccion,"/");
+							strcat(instruccion,sig);
+						}
+						write(h->pipes[i],instruccion,520);
+						escrito = 1;
 					}
-					write(h->pipes[i],instruccion,520);
-					escrito = 1;
 				}
 			}
 			if (escrito)
@@ -554,7 +580,7 @@ void procesarRaiz(struct hijos * h,int lectura)
 			free(instruccion);
 			free(buffer);
 			free(resultado);
-			return;
+			return h;
 		} 
 		else 
 		{

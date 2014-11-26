@@ -71,7 +71,7 @@ struct hijos * generarHijos()
 					closedir(dirp);
 					struct hijos *haux = generarHijos();
 
-					procesarHijo(haux);
+					haux = procesarHijo(haux);
 
 					if (haux != NULL) liberarHijos(haux);
 					exit(0);	
@@ -124,7 +124,7 @@ int main(int argc, char const *argv[])
 	struct hijos *h = generarHijos();
 	dup2(salidaEstandar,1);
 	close(salidaEstandar);
-	procesarRaiz(h,lectura);
+	h = procesarRaiz(h,lectura);
 
 	liberarHijos(h);
 	return 0;

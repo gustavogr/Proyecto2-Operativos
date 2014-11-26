@@ -12,6 +12,6 @@ struct hijos
 
 void liberarHijos(struct hijos *);
 
-void procesarHijo(struct hijos *);
+struct hijos * procesarHijo(struct hijos *);
 
-void procesarRaiz(struct hijos *,int);
+struct hijos * procesarRaiz(struct hijos *,int);
